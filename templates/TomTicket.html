@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard de Chamados</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap 5 CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f9;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #343a40;
+      color: #fff;
+      padding-top: 20px;
+    }
+    .sidebar a {
+      color: #ccc;
+      text-decoration: none;
+      display: block;
+      padding: 10px 20px;
+    }
+    .sidebar a:hover {
+      background-color: #495057;
+      color: #fff;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 30px;
+    }
+    .table-container {
+      background-color: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .table th {
+      background-color: #ed5740;
+      color: #fff;
+    }
+    .form-control {
+      font-size: 0.9rem;
+    }
+    .form-label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="position-fixed sidebar d-flex flex-column" style="width: 250px;">
+    <h4 class="text-center text-white mb-4"><i class="bi bi-ticket-perforated"></i> TomTicket</h4>
+    
+    <div class="px-3">
+      <form method="get" action="/">
+        <div class="mb-3">
+          <label for="filtroCategoria" class="form-label">Categoria</label>
+          <input type="text" class="form-control" id="filtroCategoria" name="categoria" value="{{ categoria }}">
+        </div>
+        <div class="mb-3">
+          <label for="filtroAtendente" class="form-label">Atendente</label>
+          <input type="text" class="form-control" id="filtroAtendente" name="atendente" value="{{ atendente }}">
+        </div>
+        <div class="mb-3">
+          <label for="filtroPrioridade" class="form-label">Prioridade</label>
+          <select class="form-select" id="filtroPrioridade" name="prioridade">
+            <option value="">Todas</option>
+            <option value="Baixa" {% if prioridade == 'Baixa' %}selected{% endif %}>Baixa</option>
+            <option value="Média" {% if prioridade == 'Média' %}selected{% endif %}>Média</option>
+            <option value="Alta" {% if prioridade == 'Alta' %}selected{% endif %}>Alta</option>
+            <option value="Urgente" {% if prioridade == 'Urgente' %}selected{% endif %}>Urgente</option>
+          </select>
+        </div>
+        <button class="btn btn-danger w-100"><i class="bi bi-funnel-fill"></i> Filtrar</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Conteúdo -->
+  <div class="content">
+    <div class="container-fluid">
+      <h2 class="mb-4">Lista de Chamados</h2>
+
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th>Cliente</th>
+                <th>Departamento</th>
+                <th>Data Criação</th>
+                <th>Situação</th>
+                <th>Mensagem</th>
+                <th>Prioridade</th>
+                <th>Atendente</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for chamado in chamados %}
+              <tr>
+                <td>{{ chamado.protocolo }}</td>
+                <td>{{ chamado.titulo }}</td>
+                <td>{{ chamado.categoria }}</td>
+                <td>{{ chamado.nomecliente }}</td>
+                <td>{{ chamado.departamento }}</td>
+                <td>{{ chamado.data_criacao }}</td>
+                <td>{{ chamado.descsituacao }}</td>
+                <td>{{ chamado.mensagem }}</td>
+                <td>{{ chamado.prioridade }}</td>
+                <td>{{ chamado.atendente if chamado.atendente else 'Sem atendente' }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginação -->
+        <nav aria-label="Paginação" class="mt-3">
+          <ul class="pagination justify-content-center">
+            {% if pagina_anterior %}
+              <li class="page-item">
+                <a class="page-link" href="?pagina={{ pagina_anterior }}&categoria={{ categoria }}&atendente={{ atendente }}&prioridade={{ prioridade }}">&laquo;</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+            {% endif %}
+
+            <li class="page-item disabled"><span class="page-link">Página {{ pagina }} de {{ total_paginas }}</span></li>
+
+            {% if pagina_proxima %}
+              <li class="page-item">
+                <a class="page-link" href="?pagina={{ pagina_proxima }}&categoria={{ categoria }}&atendente={{ atendente }}&prioridade={{ prioridade }}">&raquo;</a>
+              </li>
+            {% else %}
+              <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
